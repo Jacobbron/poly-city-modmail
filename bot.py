@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-GUILD_ID = 0 # your guild id here
+GUILD_ID = 385305220617469962
 
 import discord
 from discord.ext import commands
@@ -38,7 +38,7 @@ import re
 import string
 
 
-class Modmail(commands.Bot):
+class OrderBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=self.get_pre)
         self.uptime = datetime.datetime.utcnow()
@@ -104,7 +104,7 @@ class Modmail(commands.Bot):
 
     async def on_connect(self):
         print('---------------')
-        print('Modmail connected!')
+        print('OrderBot connected!')
 
     @property
     def guild_id(self):
@@ -116,7 +116,7 @@ class Modmail(commands.Bot):
         self.guild = discord.utils.get(self.guilds, id=self.guild_id)
         print(textwrap.dedent(f'''
         ---------------
-        Client is ready!
+        OrderBot is ready!
         ---------------
         Author: Kyb3r#7220
         ---------------
@@ -141,19 +141,20 @@ class Modmail(commands.Bot):
 
     def help_embed(self, prefix):
         em = discord.Embed(color=0x00FFFF)
-        em.set_author(name='Mod Mail - Help', icon_url=self.user.avatar_url)
-        em.description = 'This bot is a python implementation of a stateless "Mod Mail" bot. ' \
+        em.set_author(name='OrderBot - Help', icon_url=self.user.avatar_url)
+        em.description = 'This bot is a python implementation of a stateless "OrderBot" bot. ' \
                          'Made by Kyb3r and improved by the suggestions of others. This bot ' \
-                         'saves no data and utilises channel topics for storage and syncing.' 
+                         'saves no data and utilises channel topics for storage and syncing.\n' \
+                         'This instance is for OrderBot to be used only in Custom Bots server!'
                  
 
-        cmds = f'`{prefix}setup [modrole] <- (optional)` - Command that sets up the bot.\n' \
+        cmds = f'`{prefix}setup [OrderBot sales/dev role]` - Command that sets up the bot.\n' \
                f'`{prefix}reply <message...>` - Sends a message to the current thread\'s recipient.\n' \
                f'`{prefix}close` - Closes the current thread and deletes the channel.\n' \
-               f'`{prefix}disable` - Closes all threads and disables modmail for the server.\n' \
+               f'`{prefix}disable` - Closes all threads and disables OrderBot for the server.\n' \
                f'`{prefix}customstatus` - Sets the Bot status to whatever you want.' \
-               f'`{prefix}block` - Blocks a user from using modmail!' \
-               f'`{prefix}unblock` - Unblocks a user from using modmail!'
+               f'`{prefix}block` - Blocks a user from using OrderBot!' \
+               f'`{prefix}unblock` - Unblocks a user from using OrderBot!'
 
         warn = 'Do not manually delete the category or channels as it will break the system. ' \
                'Modifying the channel topic will also break the system.'
@@ -168,25 +169,25 @@ class Modmail(commands.Bot):
     @commands.has_permissions(administrator=True)
     async def setup(self, ctx, *, modrole: discord.Role=None):
         '''Sets up a server for modmail'''
-        if discord.utils.get(ctx.guild.categories, name='Mod Mail'):
+        if discord.utils.get(ctx.guild.categories, name='OrderBot'):
             return await ctx.send('This server is already set up.')
 
         categ = await ctx.guild.create_category(
-            name='Mod Mail', 
+            name='OrderBot', 
             overwrites=self.overwrites(ctx, modrole=modrole)
             )
         await categ.edit(position=0)
         c = await ctx.guild.create_text_channel(name='bot-info', category=categ)
-        await c.edit(topic='Manually add user id\'s to block users.\n\n'
+        await c.edit(topic='Manually add user id\'s to block client.\n\n'
                            'Blocked\n-------\n\n')
         await c.send(embed=self.help_embed(ctx.prefix))
-        await ctx.send('Successfully set up server.')
+        await ctx.send('Successfully set up OrderBot in server.')
 
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def disable(self, ctx):
-        '''Close all threads and disable modmail.'''
-        categ = discord.utils.get(ctx.guild.categories, name='Mod Mail')
+        '''Close all threads and disable OrderBot.'''
+        categ = discord.utils.get(ctx.guild.categories, name='OrderBot')
         if not categ:
             return await ctx.send('This server is not set up.')
         for category, channels in ctx.guild.by_category():
@@ -195,10 +196,10 @@ class Modmail(commands.Bot):
                     if 'User ID:' in str(chan.topic):
                         user_id = int(chan.topic.split(': ')[1])
                         user = self.get_user(user_id)
-                        await user.send(f'**{ctx.author}** has closed this modmail session.')
+                        await user.send(f'**{ctx.author}** has closed this OrderBot session.')
                     await chan.delete()
         await categ.delete()
-        await ctx.send('Disabled modmail.')
+        await ctx.send('Disabled OrderBot.')
 
 
     @commands.command(name='close')
@@ -206,11 +207,11 @@ class Modmail(commands.Bot):
     async def _close(self, ctx):
         '''Close the current thread.'''
         if 'User ID:' not in str(ctx.channel.topic):
-            return await ctx.send('This is not a modmail thread.')
+            return await ctx.send('This is not a OrderBot thread.')
         user_id = int(ctx.channel.topic.split(': ')[1])
         user = self.get_user(user_id)
-        em = discord.Embed(title='Thread Closed')
-        em.description = f'**{ctx.author}** has closed this modmail session.'
+        em = discord.Embed(title='Order Closed')
+        em.description = f'**{ctx.author}** has closed this Custom Bot order using OrderBot.\nMessage again to open a new order.\n\n`*new orders are charged separately.`'
         em.color = discord.Color.red()
         try:
             await user.send(embed=em)
@@ -241,7 +242,7 @@ class Modmail(commands.Bot):
         member = self.guild.get_member(user.id)
         avi = user.avatar_url
         time = datetime.datetime.utcnow()
-        desc = 'Modmail thread started.'
+        desc = 'OrderBot thread started.'
         color = 0
 
         if member:
@@ -288,11 +289,11 @@ class Modmail(commands.Bot):
         if mod:
             fmt.color=discord.Color.green()
             fmt.set_author(name=str(author), icon_url=author.avatar_url)
-            fmt.set_footer(text='Moderator')
+            fmt.set_footer(text='Bot Dev')
         else:
             fmt.color=discord.Color.gold()
             fmt.set_author(name=str(author), icon_url=author.avatar_url)
-            fmt.set_footer(text='User')
+            fmt.set_footer(text='Client')
 
         embed = None
 
@@ -325,7 +326,7 @@ class Modmail(commands.Bot):
     @property
     def blocked_em(self):
         em = discord.Embed(title='Message not sent!', color=discord.Color.red())
-        em.description = 'You have been blocked from using modmail.'
+        em.description = 'You have been blocked from using OrderBot.'
         return em
 
     async def process_modmail(self, message):
@@ -339,16 +340,33 @@ class Modmail(commands.Bot):
         author = message.author
         topic = f'User ID: {author.id}'
         channel = discord.utils.get(guild.text_channels, topic=topic)
-        categ = discord.utils.get(guild.categories, name='Mod Mail')
+        categ = discord.utils.get(guild.categories, name='OrderBot')
         top_chan = categ.channels[0] #bot-info
         blocked = top_chan.topic.split('Blocked\n-------')[1].strip().split('\n')
         blocked = [x.strip() for x in blocked]
 
         if str(message.author.id) in blocked:
             return await message.author.send(embed=self.blocked_em)
+        em = discord.Embed(title='Thanks for opening a Custom Bot order thread!')
+        em.description = textwrap.dedent("""**Bot Order Form**
+    **• Bot Name:** The Bot
+    **• Avatar URL:** <https://imgur.com/avatar_url_link>
+    **• Features request:** Easy to setup custom commands, web dashboard, moderation tools, automod, autorole, rotating status, rotating avatars, etc.
+    **• Urgency:** Very urgent!
+    **• Price offering:** USD10
 
-        em = discord.Embed(title='Thanks for the message!')
-        em.description = 'The moderation team will get back to you as soon as possible!'
+    The bot dev team will get back to you as soon as possible!
+    
+    While you wait, please create a __[bot account here](<https://discordapp.com/developers/applications/me/>)__
+    Upload the Avatar image if possible, and write the Name
+    **Copy Client ID** numbers and paste here as a reply.
+    Add a description for your Custom Bot, and scroll down
+    Then **CREATE A BOT USER** and accept.
+    **Reveal Token**, copy and send here.
+
+    Feel free to reply to this message with any question or further request.
+    Sincerely,
+    *Custom Bots team and devs*""")
         em.color = discord.Color.green()
 
         if channel is not None:
@@ -374,7 +392,7 @@ class Modmail(commands.Bot):
         '''Reply to users using this command.'''
         categ = discord.utils.get(ctx.guild.categories, id=ctx.channel.category_id)
         if categ is not None:
-            if categ.name == 'Mod Mail':
+            if categ.name == 'OrderBot':
                 if 'User ID:' in ctx.channel.topic:
                     ctx.message.content = msg
                     await self.process_reply(ctx.message)
@@ -391,14 +409,14 @@ class Modmail(commands.Bot):
     @commands.command()
     @commands.has_permissions(manage_channels=True)
     async def block(self, ctx, id=None):
-        '''Block a user from using modmail.'''
+        '''Block a user from using OrderBot.'''
         if id is None:
             if 'User ID:' in str(ctx.channel.topic):
                 id = ctx.channel.topic.split('User ID: ')[1].strip()
             else:
                 return await ctx.send('No User ID provided.')
 
-        categ = discord.utils.get(ctx.guild.categories, name='Mod Mail')
+        categ = discord.utils.get(ctx.guild.categories, name='OrderBot')
         top_chan = categ.channels[0] #bot-info
         topic = str(top_chan.topic)
         topic += id + '\n'
@@ -412,14 +430,14 @@ class Modmail(commands.Bot):
     @commands.command()
     @commands.has_permissions(manage_channels=True)
     async def unblock(self, ctx, id=None):
-        '''Unblocks a user from using modmail.'''
+        '''Unblocks a user from using OrderBot.'''
         if id is None:
             if 'User ID:' in str(ctx.channel.topic):
                 id = ctx.channel.topic.split('User ID: ')[1].strip()
             else:
                 return await ctx.send('No User ID provided.')
 
-        categ = discord.utils.get(ctx.guild.categories, name='Mod Mail')
+        categ = discord.utils.get(ctx.guild.categories, name='OrderBot')
         top_chan = categ.channels[0] #bot-info
         topic = str(top_chan.topic)
         topic = topic.replace(id+'\n', '')
@@ -433,4 +451,4 @@ class Modmail(commands.Bot):
 
                 
 if __name__ == '__main__':
-    Modmail.init()
+    OrderBot.init()
