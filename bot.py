@@ -314,7 +314,7 @@ class OrderBot(commands.Bot):
         await self.send_mail(message, user, mod=True)
 
     def format_name(self, author):
-        name = author.name
+        name = author.display_name
         new_name = ''
         for letter in name:
             if letter in string.ascii_letters + string.digits:
