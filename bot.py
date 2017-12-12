@@ -124,7 +124,7 @@ class OrderBot(commands.Bot):
         User ID: {self.user.id}
         ---------------
         '''))
-        await self.change_presence(status=discord.Status.online, game=discord.Game(type=4, name='Bot Orders via DM'))
+        await self.change_presence(status=discord.Status.online, game=discord.Game(type=2, name='Bot Orders via DM'))
 
     def overwrites(self, ctx, modrole=None):
         '''Permision overwrites for the guild.'''
