@@ -404,7 +404,7 @@ class OrderBot(commands.Bot):
         '''Set a custom playing status for the bot.'''
         if message == 'clear':
             return await self.change_presence(game=None)
-        await self.change_presence(game=discord.Game(name=message), status=discord.Status.online)
+        await self.change_presence(game=discord.Game(type=2, name=message), status=discord.Status.online)
         await ctx.send(f"Changed status to **{message}**")
 
     @commands.command()
@@ -449,6 +449,11 @@ class OrderBot(commands.Bot):
         else:
             await ctx.send('User is not already blocked.')
 
+    @commands.command(hidden=True)
+    @commands.has_permissions(manage_channels=True)
+    async def say(self, ctx, *, content):
+        await ctx.message.delete()
+        await ctx.send(content)
 
                 
 if __name__ == '__main__':
